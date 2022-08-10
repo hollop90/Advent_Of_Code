@@ -25,21 +25,23 @@ int main(){
 
         
         if (strcmp(action, "forward") == 0){
-            posHorizontal++;
+            posHorizontal += value;
         }
         else if (strcmp(action, "up") == 0){
-            posDepth--;
+            posDepth -= value;
         }
         else if (strcmp(action, "down") == 0){
-            posDepth++;
+            posDepth += value;
         }
         else{
             std::cout << "Bad stuff" << std::endl;
         }
-        std::cout << i++ << '\n';
+        //std::cout << i++ << '\n';
     }
 
+    posProduct = posDepth * posHorizontal;
+
     std::cout << "Horizonal position: " << posHorizontal << '\n';
-    std::cout << "Depth position: " << posDepth;
-    std::cout << "Product: " << posProduct;
+    std::cout << "Depth position: " << posDepth << '\n';
+    std::cout << "Product: " << posProduct << '\n';
 }
