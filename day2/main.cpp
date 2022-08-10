@@ -1,47 +1,98 @@
 #include <iostream>
 #include <fstream>
-#include <string.h>
+#include <string>
+#include <sstream>
 
-char action[20];
+std::string test = "Ugo";
+std::string action;
 int value = 0;
+
+
+
 
 int posHorizontal = 0;
 int posDepth = 0;
 int posProduct = 0;
+int posAim = 0;
+
 
 int main(){
-    std::fstream inFile;
-    inFile.open("input.txt");
-    int i = 0;
+    std::ifstream inFile;
+    inFile.open("input.txt", std::ios::in | std::ios::out);
 
-    // read a line from the file
-    // copy the "action" into a string and the value into an int
-    // use a switch case block to increment or decrement the appropritae variables
-    // multiply the final position values together
+    // Just experimenting with the stream API. This block gets the length of the file in bytes
+    inFile.seekg(0, std::ios::end);
+    int len = inFile.tellg();
+    inFile.seekg(0, std::ios::beg);
 
+    //! Problem 1
+    // Find the product of the final horizontal position and the final depth
+    while(!inFile.eof()){
+        inFile >> action;
+        inFile >> value;
+
+        // By using std::string we can simply make comparisons by using '=='
+        if (action == "forward"){
+            posHorizontal += value;
+        }
+        else if (action == "up"){
+            posDepth -= value;
+        }
+        else if (action == "down"){
+            posDepth += value;
+        }
+        
+        // Reset the variables for the next loop
+        action.clear();
+        value = 0;
+    }
+
+    posProduct = posDepth * posHorizontal;
+
+    std::cout << "\nProblem 1:\n" 
+    << "Horizonal position: " << posHorizontal << '\n'
+    << "Depth position: " << posDepth << '\n'
+    << "Product: " << posProduct << '\n';
+
+    //! Problem 2
+    // Change how you understand the data. Aim essentially represents if the sub is pointing up or down.
+    // No real trigonometry is used here, but we multiply the Aim by the posHorizontal to pretend that we're doing real maths
+    // Again the answer is the product of the final position values
+
+    posHorizontal = 0;
+    posDepth = 0;
+    posProduct = 0;
+    posAim = 0;
+
+    // Clearing the status bits and moving the file pointer back to the beginning
+    // This allows us to read the file again
+    inFile.clear();
+    inFile.seekg(0, std::ios::beg);
     while(!inFile.eof()){
         inFile >> action;
         inFile >> value;
 
         
-        if (strcmp(action, "forward") == 0){
+        if (action == "forward"){
             posHorizontal += value;
+            posDepth += value * posAim;
         }
-        else if (strcmp(action, "up") == 0){
-            posDepth -= value;
+        else if (action == "up"){
+            posAim -= value;
         }
-        else if (strcmp(action, "down") == 0){
-            posDepth += value;
+        else if (action == "down"){
+            posAim += value;
         }
-        else{
-            std::cout << "Bad stuff" << std::endl;
-        }
-        //std::cout << i++ << '\n';
+        
+        action.clear();
+        value = 0;
     }
+    inFile.close();
 
     posProduct = posDepth * posHorizontal;
-
-    std::cout << "Horizonal position: " << posHorizontal << '\n';
-    std::cout << "Depth position: " << posDepth << '\n';
-    std::cout << "Product: " << posProduct << '\n';
+    
+    std::cout << "\nProblem 2:\n"
+    << "Horizonal position: " << posHorizontal << '\n'
+    << "Depth position: " << posDepth << '\n'
+    << "Product: " << posProduct << '\n';
 }
