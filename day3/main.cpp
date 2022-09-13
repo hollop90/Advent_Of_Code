@@ -9,6 +9,11 @@
 
 constexpr int NUM_BITS = 12;
 
+/**
+ * TODO Make some functions for repeated operations (finding MCB and LCB, converting to a bitset etc.)
+ * TODO Remove the dependance of compile time constants for the bitsets (eg. give them a large size and only use whats needed)
+ */
+
 int main()
 {
     std::fstream inFile;
@@ -133,10 +138,6 @@ int main()
         }
     }
 
-
-
-
-    //todo
     filterList = byteList;
     char LCB{};
     oneCnt = zeroCnt = 0;
@@ -205,12 +206,9 @@ int main()
         }
     }
 
-
-
-
-
     std::cout << "#### PART TWO OUTPUT ####" << std::endl;
     std::cout << "OXYGEN: " << oxygen.to_string() << '\t' << oxygen.to_ulong() << std::endl;
     std::cout << "CARBON: " << carbon << '\t' << carbon.to_ulong() << std::endl;
     std::cout << "LIFE: " << (oxygen.to_ulong() * carbon.to_ulong()) << std::endl;
+    getchar();
 }
