@@ -4,58 +4,213 @@
 #include <array>
 #include <bitset>
 #include <chrono>
+#include <vector>
+#include <algorithm>
 
 constexpr int NUM_BITS = 12;
-std::array<int, NUM_BITS> count = {};
 
 int main()
 {
-    std::fstream inFile("input.txt");
+    std::fstream inFile;
     std::string inData;
-    std::cout << inData << '\n';
+    std::vector<std::string> byteList;
+    int oneCnt{};
+    int zeroCnt{};
+    std::bitset<NUM_BITS> gamma;
+    std::bitset<NUM_BITS> epsilon;
 
-    // loop through the file
+    inFile.open("input.txt", std::ios::in);
     while (!inFile.eof())
     {
         inFile >> inData;
+        byteList.push_back(inData);
+    }
+    inFile.close();
 
-        // loop through each line. Increment or decrtement a value depending
-        // on if the current character is a one or a zero
-        for (int i = 0; i < NUM_BITS; i++)
+    int wordSize = byteList[0].size();
+
+    for (int i = 0; i < wordSize; i++)
+    {
+        for (auto bit : byteList)
         {
-            if (inData[i] == '0')
+            if (bit[i] == '1')
             {
-                count[i]++; // ZERO
+                oneCnt++;
             }
-            else
+            else if (bit[i] == '0')
             {
-                count[i]--; // ONE
+                zeroCnt++;
             }
         }
-    }
 
-    std::bitset<NUM_BITS> gamma;
-    int tracker = count.size();
-
-    for (int i = 0; i < count.size(); i++)
-    {
-        if (count[i] > 0)
+        if (oneCnt > zeroCnt)
         {
-            gamma.set(tracker -1);
+            gamma.set((wordSize - 1) - i);
         }
         else
         {
-            gamma.set(tracker - 1, 0);
+            gamma.set((wordSize - 1) - i, 0);
         }
-        tracker--;
+        oneCnt = zeroCnt = 0;
     }
 
-    std::cout << "GAMMA: " << gamma.to_ulong() << std::endl;
-
-    std::bitset<NUM_BITS> epsilon(gamma);
+    epsilon = gamma;
     epsilon.flip();
 
-    std::cout << "EPSILON: " << epsilon.to_ulong() << std::endl;
-
+    std::cout << "#### PART ONE OUTPUT ####" << std::endl;
+    std::cout << "GAMMA: " << gamma.to_string() << '\t' << gamma.to_ulong() << std::endl;
+    std::cout << "EPSILON: " << epsilon << '\t' << epsilon.to_ulong() << std::endl;
     std::cout << "POWER: " << (gamma.to_ulong() * epsilon.to_ulong()) << std::endl;
+
+    std::vector<std::string> filterList = byteList;
+    std::bitset<NUM_BITS> oxygen;
+    std::bitset<NUM_BITS> carbon;
+    char MCB{};
+    int removedCnt {};
+    oneCnt = zeroCnt = 0;
+
+    for (int i = 0; i < wordSize; i++)
+    {
+        for (auto bit : filterList)
+        {
+            if (bit.compare("N"))
+            {
+
+                if (bit[i] == '1')
+                {
+                    oneCnt++;
+                }
+                else if (bit[i] == '0')
+                {
+                    zeroCnt++;
+                }
+            }
+        }
+
+        if (oneCnt > zeroCnt)
+        {
+            MCB = '1';
+        }
+        else if (oneCnt < zeroCnt)
+        {
+            MCB = '0';
+        }
+        else if (oneCnt == zeroCnt)
+        {
+            MCB = '1';
+        }
+
+        for (auto &bit : filterList)
+        {
+            if (bit[i] != MCB)
+            {
+                bit = "N";
+            }
+        }
+
+        oneCnt = zeroCnt = 0;
+        if (filterList.size() -  std::count(filterList.begin(), filterList.end(), "N") == 1)
+        {
+            break;
+        }
+    }
+
+    for (auto word : filterList)
+    {
+        if (word.compare("N"))
+        {
+            for (int k = 0; k < wordSize; k++)
+            {
+                if (word[k] == '1')
+                {
+                    oxygen.set((wordSize - 1) - k);
+                }
+                else if (word[k] == '0')
+                {
+                    oxygen.set((wordSize - 1) - k, 0);
+                }
+            }
+        }
+    }
+
+
+
+
+    //todo
+    filterList = byteList;
+    char LCB{};
+    oneCnt = zeroCnt = 0;
+
+    for (int i = 0; i < wordSize; i++)
+    {
+        for (auto bit : filterList)
+        {
+            if (bit.compare("N"))
+            {
+
+                if (bit[i] == '1')
+                {
+                    oneCnt++;
+                }
+                else if (bit[i] == '0')
+                {
+                    zeroCnt++;
+                }
+            }
+        }
+
+        if (oneCnt < zeroCnt)
+        {
+            LCB = '1';
+        }
+        else if (oneCnt > zeroCnt)
+        {
+            LCB = '0';
+        }
+        else if (oneCnt == zeroCnt)
+        {
+            LCB = '0';
+        }
+
+        for (auto &bit : filterList)
+        {
+            if (bit[i] != LCB)
+            {
+                bit = "N";
+            }
+        }
+
+        oneCnt = zeroCnt = 0;
+        if (filterList.size() -  std::count(filterList.begin(), filterList.end(), "N") == 1)
+        {
+            break;
+        }
+    }
+
+    for (auto word : filterList)
+    {
+        if (word.compare("N"))
+        {
+            for (int k = 0; k < wordSize; k++)
+            {
+                if (word[k] == '1')
+                {
+                    carbon.set((wordSize - 1) - k);
+                }
+                else if (word[k] == '0')
+                {
+                    carbon.set((wordSize - 1) - k, 0);
+                }
+            }
+        }
+    }
+
+
+
+
+
+    std::cout << "#### PART TWO OUTPUT ####" << std::endl;
+    std::cout << "OXYGEN: " << oxygen.to_string() << '\t' << oxygen.to_ulong() << std::endl;
+    std::cout << "CARBON: " << carbon << '\t' << carbon.to_ulong() << std::endl;
+    std::cout << "LIFE: " << (oxygen.to_ulong() * carbon.to_ulong()) << std::endl;
 }
