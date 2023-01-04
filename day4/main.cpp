@@ -10,10 +10,49 @@ std::vector<int> draw;
 std::vector<std::array<std::array<int, 5>, 5>> tables;
 bool winState = false;
 
-int playBingo(int drawArg, std::vector<std::array<std::array<int, 5>, 5>> &tablesArg)
+bool checkWin(const std::array<std::array<int, 5>, 5> &tablesArg)
 {
-    // draw a number
-    // loop through every single table
+    std::array<int, 5> colMatches = {};
+    std::array<int, 5> rowMatches = {};
+
+    for (int i = 0; i < tablesArg.size(); i++)
+    {
+        for (int j = 0; j < tables[0].size(); j++)
+        {
+            if (tablesArg[i][j] == 255)
+            {
+                colMatches[i] += 1;
+                rowMatches[j] += 1;
+            }
+        }
+    }
+
+    return (std::find(colMatches.begin(), colMatches.end(), 5) != colMatches.end() ||
+            std::find(rowMatches.begin(), rowMatches.end(), 5) != rowMatches.end());
+}
+
+int calcScore(const std::array<std::array<int, 5>, 5> &tablesArg, const int drawArg)
+{
+    int scoreSum = 0;
+    int scoreTotal = 0;
+
+    for (int i = 0; i < tablesArg.size(); i++)
+    {
+        for (int j = 0; j < tablesArg[0].size(); j++)
+        {
+            if (tablesArg[i][j] != 255)
+            {
+                scoreSum += tablesArg[i][j];
+            }
+        }
+    }
+    scoreTotal = scoreSum * drawArg;
+    std::cout << ". With a score of: " << scoreTotal << '\n';
+    return scoreTotal;
+}
+
+void playBingo(int drawArg, std::vector<std::array<std::array<int, 5>, 5>> &tablesArg)
+{
     for (int i = 0; i < tablesArg.size(); i++)
     {
         for (int j = 0; j < tablesArg[0].size(); j++)
@@ -27,63 +66,14 @@ int playBingo(int drawArg, std::vector<std::array<std::array<int, 5>, 5>> &table
             }
         }
 
-        // After each table check if it has won
-        std::array<int, 5> colMatches = {};
-        std::array<int, 5> rowMatches = {};
-        for (int j = 0; j < tablesArg[0].size(); j++)
-        {
-            for (int k = 0; k < tablesArg[0][0].size(); k++)
-            {
-                if (tablesArg[i][j][k] == 255)
-                {
-                    colMatches[k] += 1;
-                    rowMatches[j] += 1;
-                }
-            }
-        }
-
-        int scoreSum = 0;
-        int scorTotal = 0;
-        if (std::find(colMatches.begin(), colMatches.end(), 5) != colMatches.end())
+        if (checkWin(tablesArg[i]))
         {
             winState = true;
-            for (int j = 0; j < tablesArg[0].size(); j++)
-            {
-                for (int k = 0; k < tablesArg[0][0].size(); k++)
-                {
-                    if (tablesArg[i][j][k] != 255)
-                    {
-                        scoreSum += tablesArg[i][j][k];
-                    }
-                }
-            }
-            scorTotal = scoreSum * drawArg;
-            std::cout << "Winner found at table: " << i << ". With a score of: " << scorTotal << '\n';
-            return scorTotal;
-        }
-
-        if (std::find(rowMatches.begin(), rowMatches.end(), 5) != rowMatches.end())
-        {
-            winState = true;
-            for (int j = 0; j < tablesArg[0].size(); j++)
-            {
-                for (int k = 0; k < tablesArg[0][0].size(); k++)
-                {
-                    if (tablesArg[i][j][k] != 255)
-                    {
-                        scoreSum += tablesArg[i][j][k];
-                    }
-                }
-            }
-            scorTotal = scoreSum * drawArg;
-            std::cout << "Winner found at table: " << i << ". With a score of: " << scorTotal << '\n';
-            return scorTotal;
+            std::cout << "Winner at table: " << i;
+            calcScore(tablesArg[i], drawArg);
+            return;
         }
     }
-    // loop through table elements
-    // mark table element if it mathces current draw number
-    //
-    return 0;
 }
 
 void makeTables(std::ifstream &fs, std::vector<std::array<std::array<int, 5>, 5>> &vec)
@@ -98,6 +88,7 @@ void makeTables(std::ifstream &fs, std::vector<std::array<std::array<int, 5>, 5>
         {
             int prevElem = tempTable[i][j];
             fs >> tempTable[i][j];
+
             // Check if any new data was read
             if (tempTable[i][j] == prevElem)
             {
@@ -109,9 +100,9 @@ void makeTables(std::ifstream &fs, std::vector<std::array<std::array<int, 5>, 5>
     vec.push_back(tempTable);
 }
 
-void readFile(std::string filename, std::vector<int> &drawArg, std::vector<std::array<std::array<int, 5>, 5>> &tablesArg)
+void readFile(const std::string filename, std::vector<int> &drawArg, std::vector<std::array<std::array<int, 5>, 5>> &tablesArg)
 {
-    std::ifstream inputFile(filename.c_str());
+    std::ifstream inputFile(filename);
     std::string tmpStr;
     std::string delim = ",";
     std::size_t pos = 0;
@@ -135,7 +126,7 @@ void readFile(std::string filename, std::vector<int> &drawArg, std::vector<std::
     // inputFile.close();
 }
 
-void printTable(std::array<std::array<int, 5>, 5> tablesArg)
+void printTable(const std::array<std::array<int, 5>, 5> &tablesArg)
 {
     std::cout << '\n';
     for (auto row : tablesArg)
@@ -148,10 +139,6 @@ void printTable(std::array<std::array<int, 5>, 5> tablesArg)
     }
 }
 
-// int checkWinner(std::vector<std::array<std::array<int, 5>, 5>> &tablesArg, )
-// {
-
-// }
 int main()
 {
     readFile("input.txt", draw, tables);
