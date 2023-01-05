@@ -1,10 +1,11 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <array>
 #include <string>
 #include <vector>
 #include <algorithm>
+
+//#define AOC_PART_ONE
 
 std::vector<int> draw;
 std::vector<std::array<std::array<int, 5>, 5>> tables;
@@ -21,8 +22,8 @@ bool checkWin(const std::array<std::array<int, 5>, 5> &tablesArg)
         {
             if (tablesArg[i][j] == 255)
             {
-                colMatches[i] += 1;
-                rowMatches[j] += 1;
+                colMatches[j] += 1;
+                rowMatches[i] += 1;
             }
         }
     }
@@ -51,8 +52,9 @@ int calcScore(const std::array<std::array<int, 5>, 5> &tablesArg, const int draw
     return scoreTotal;
 }
 
-void playBingo(int drawArg, std::vector<std::array<std::array<int, 5>, 5>> &tablesArg)
+void playBingo(int drawArg, std::vector<std::array<std::array<int, 5>, 5>> &tablesArg, std::vector<bool> &winTrackArg)
 {
+    // off by one error caused by decrementing the size of the vector (I think)
     for (int i = 0; i < tablesArg.size(); i++)
     {
         for (int j = 0; j < tablesArg[0].size(); j++)
@@ -65,13 +67,18 @@ void playBingo(int drawArg, std::vector<std::array<std::array<int, 5>, 5>> &tabl
                 }
             }
         }
-
-        if (checkWin(tablesArg[i]))
+        if (winTrackArg[i] == false)
         {
-            winState = true;
-            std::cout << "Winner at table: " << i;
-            calcScore(tablesArg[i], drawArg);
-            return;
+            if (checkWin(tablesArg[i]))
+            {
+                std::cout << "Winner at table: " << i;
+                calcScore(tablesArg[i], drawArg);
+                winTrackArg[i] = true;
+                #ifdef AOC_PART_ONE
+                winState = true;
+                return;
+                #endif
+            }
         }
     }
 }
@@ -143,15 +150,16 @@ int main()
 {
     readFile("input.txt", draw, tables);
 
+    std::vector<bool> winTrack(tables.size());
+    // This feels sub optimal ^^^
+
     // PART ONE: WHO WILL WIN **FIRST**
     for (auto num : draw)
     {
-        playBingo(num, tables);
+        playBingo(num, tables, winTrack);
         if (winState == true)
         {
             break;
         }
     }
-    // PART TWO: WHO WILL WIN **LAST**
-    // printAns();
 }
