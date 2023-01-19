@@ -48,7 +48,6 @@ int calcScore(const std::array<std::array<int, 5>, 5> &tablesArg, const int draw
         }
     }
     scoreTotal = scoreSum * drawArg;
-    std::cout << ". With a score of: " << scoreTotal << '\n';
     return scoreTotal;
 }
 
@@ -71,8 +70,7 @@ void playBingo(int drawArg, std::vector<std::array<std::array<int, 5>, 5>> &tabl
         {
             if (checkWin(tablesArg[i]))
             {
-                std::cout << "Winner at table: " << i;
-                calcScore(tablesArg[i], drawArg);
+                std::cout << "Winner at table: " << i <<". With a score of: " << calcScore(tablesArg[i], drawArg) << '\n';
                 winTrackArg[i] = true;
                 #ifdef AOC_PART_ONE
                 winState = true;
@@ -149,11 +147,8 @@ void printTable(const std::array<std::array<int, 5>, 5> &tablesArg)
 int main()
 {
     readFile("input.txt", draw, tables);
-
     std::vector<bool> winTrack(tables.size());
-    // This feels sub optimal ^^^
 
-    // PART ONE: WHO WILL WIN **FIRST**
     for (auto num : draw)
     {
         playBingo(num, tables, winTrack);
