@@ -50,6 +50,8 @@
         "numbers": "cpp",
         "stdexcept": "cpp",
         "typeinfo": "cpp",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "list": "cpp",
+        "map": "cpp"
     }
 }
