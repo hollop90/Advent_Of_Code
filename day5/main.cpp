@@ -49,11 +49,11 @@ get_line_points(Line _line)
         ret_list.emplace_back(curr_point);
         if (_line.orientation() == Line::horizontal)
         {
-            x_val++;
+            _line.getBegin().first > _line.getEnd().first ? x_val-- : x_val++;
         }
         else
         {
-            y_val++;
+            _line.getBegin().second > _line.getEnd().second ? y_val-- : y_val++;
         }
     }
     ret_list.emplace_back(curr_point);
@@ -101,6 +101,8 @@ std::vector<Line> myLines;
 
 int main(void)
 {
+    std::vector<Line::Point> unique_intersections; // List of points of intersection
+
     const std::string Filename = "../input.txt";
     std::ifstream inFile(Filename);
     
@@ -118,44 +120,61 @@ int main(void)
         std::getline(inFile, inString);
         std::cout << inString << "\n";
         if (!inString.compare(""))
+        {
             break;
+        }
         auto [begin, end] = parseLine(inString); // structured bindings ftw!
         if (begin.first == end.first || begin.second == end.second)
+        {
             myLines.emplace_back(begin, end);
+        }
     }
 
     // Print out the lines (currently prints too much)
     std::cout << "Lines Read: " << myLines.size() << "\n";
-    std::cout << "Line Coords:\n";
-    for (auto line : myLines)
+    // // std::cout << "Line Coords:\n";
+    // // for (auto line : myLines)
+    // // {
+    // //     std::cout << "Begin:\t" << pairToStr(line.getBegin()) << "\n";
+    // //     std::cout << "End:\t" << pairToStr(line.getEnd()) << "\n";
+    // //     std::cout << "Orientation: " << line.orientation() << "\n\n";
+    // // }
+
+    for (std::size_t i = 0; i < myLines.size(); i++)
     {
-        std::cout << "Begin:\t" << pairToStr(line.getBegin()) << "\n";
-        std::cout << "End:\t" << pairToStr(line.getEnd()) << "\n";
-        std::cout << "Orientation: " << line.orientation() << "\n\n";
+        std::vector<Line::Point> line_a = get_line_points(myLines.at(i));
+
+        for (auto elem : myLines)
+        {
+            std::vector<Line::Point> line_b = get_line_points(elem);
+
+            if ((elem == myLines.at(i)) == 0)
+            {
+                update_intersections    (unique_intersections,
+                                         line_a,
+                                         line_b);
+            }
+        }
     }
 
-    std::vector<Line::Point> intersections; // List of points of intersection
-
-    std::vector<Line::Point> line_a_points; // List of points in lineA
-    std::vector<Line::Point> line_b_points; // List of points in lineB
+    // // std::vector<Line::Point> line_a_points; // List of points in lineA
+    // // std::vector<Line::Point> line_b_points; // List of points in lineB
 
     
-    // Fill out a list of points for line_a
-
-    line_a_points = get_line_points(myLines.at(0));
+    // // // Fill out a list of points for line_a
+    // // line_a_points = get_line_points(myLines.at(0));
     
-    // Fill out a list of points for line_a
+    // // // Fill out a list of points for line_a
+    // // line_b_points = get_line_points(myLines.at(1));
 
-    line_b_points = get_line_points(myLines.at(1));
-
-    // Checnk for intersections
-    update_intersections    (intersections,
-                             line_a_points,
-                             line_b_points);
-
-
-    for (auto elem : myLines)
-    {
-        
-    }
+    // // // Checnk for intersections
+    // // update_intersections    (unique_intersections,
+    // //                          line_a_points,
+    // //                          line_b_points);
+    
+    std::cout << "Intersections: " << unique_intersections.size() << "\n";
+    // for (auto elem : unique_intersections)
+    // {
+    //     std::cout << pairToStr(elem) << "\n";
+    // }
 }
