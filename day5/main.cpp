@@ -7,21 +7,6 @@
 #include <sstream>
 #include "Line.h"
 
-// ori::Orientation checkOri(const Line &_line)
-// {
-//     const auto begin = _line.getBegin();
-//     const auto end = _line.getEnd();
-
-//     if (begin.first == end.first)
-//         return ori::horizontal;
-
-//     else if (begin.second == end.second)
-//         return ori::vertical;
-
-//     else
-//         return ori::invalid;
-// }
-
 void
 update_intersections    (std::vector<Line::Point> &_list,
                          std::vector<Line::Point> _line_a,
@@ -132,13 +117,6 @@ int main(void)
 
     // Print out the lines (currently prints too much)
     std::cout << "Lines Read: " << myLines.size() << "\n";
-    // // std::cout << "Line Coords:\n";
-    // // for (auto line : myLines)
-    // // {
-    // //     std::cout << "Begin:\t" << pairToStr(line.getBegin()) << "\n";
-    // //     std::cout << "End:\t" << pairToStr(line.getEnd()) << "\n";
-    // //     std::cout << "Orientation: " << line.orientation() << "\n\n";
-    // // }
 
     for (std::size_t i = 0; i < myLines.size(); i++)
     {
@@ -156,21 +134,6 @@ int main(void)
             }
         }
     }
-
-    // // std::vector<Line::Point> line_a_points; // List of points in lineA
-    // // std::vector<Line::Point> line_b_points; // List of points in lineB
-
-    
-    // // // Fill out a list of points for line_a
-    // // line_a_points = get_line_points(myLines.at(0));
-    
-    // // // Fill out a list of points for line_a
-    // // line_b_points = get_line_points(myLines.at(1));
-
-    // // // Checnk for intersections
-    // // update_intersections    (unique_intersections,
-    // //                          line_a_points,
-    // //                          line_b_points);
     
     std::cout << "Intersections: " << unique_intersections.size() << "\n";
     // for (auto elem : unique_intersections)
