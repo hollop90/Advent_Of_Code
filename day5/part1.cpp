@@ -14,7 +14,8 @@ update_intersections    (std::vector<Line::Point> &_list,
 {
     for (auto elem : _line_a)
     {
-        auto index = std::find(_line_b.begin(), _line_b.end(), elem);
+        auto index =    std::find(_line_b.begin(), _line_b.end(), elem);
+        //auto presence = std::find(_list.begin(), _list.end(), elem);
         if ((index != _line_b.end()) && (std::find(_list.begin(), _list.end(), elem) == _list.end()))
         {
             _list.emplace_back(elem);
@@ -36,8 +37,13 @@ get_line_points(Line _line)
         {
             _line.getBegin().first > _line.getEnd().first ? x_val-- : x_val++;
         }
+        else if (_line.orientation() == Line::vertical)
+        {
+            _line.getBegin().second > _line.getEnd().second ? y_val-- : y_val++;
+        }
         else
         {
+            _line.getBegin().first > _line.getEnd().first ? x_val-- : x_val++;
             _line.getBegin().second > _line.getEnd().second ? y_val-- : y_val++;
         }
     }
@@ -103,7 +109,7 @@ int main(void)
     while (!inFile.eof())
     {
         std::getline(inFile, inString);
-        std::cout << inString << "\n";
+        // std::cout << inString << "\n";
         if (!inString.compare(""))
         {
             break;
@@ -122,11 +128,11 @@ int main(void)
     {
         std::vector<Line::Point> line_a = get_line_points(myLines.at(i));
 
-        for (auto elem : myLines)
+        for (std::size_t j = i + 1; j < myLines.size(); j++) // This O( (n^2)/2 ) optimization is thanks to naza
         {
-            std::vector<Line::Point> line_b = get_line_points(elem);
+            std::vector<Line::Point> line_b = get_line_points(myLines.at(j));
 
-            if ((elem == myLines.at(i)) == 0)
+            if ((myLines.at(j) == myLines.at(i)) == 0)
             {
                 update_intersections    (unique_intersections,
                                          line_a,

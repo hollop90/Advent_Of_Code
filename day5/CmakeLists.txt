@@ -5,12 +5,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 
-add_executable(main main.cpp)
+add_executable(part1 part1.cpp)
+add_executable(part2 part2.cpp)
 
 add_library(Line Line.cpp)
 
-target_link_libraries(main PRIVATE Line)
-target_include_directories(main PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(part1 PRIVATE Line)
+target_include_directories(part1 PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(part2 PRIVATE Line)
+target_include_directories(part2 PRIVATE ${PROJECT_SOURCE_DIR})
 
-set(CMAKE_BUILD_TYPE Debug)
-target_compile_options(main PRIVATE -Wall -Wextra -Wpedantic -Werror)
+set(CMAKE_BUILD_TYPE Release)
+target_compile_options(part1 PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_compile_options(part2 PRIVATE -Wall -Wextra -Wpedantic -Werror)
