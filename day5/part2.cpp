@@ -115,10 +115,7 @@ int main(void)
             break;
         }
         auto [begin, end] = parseLine(inString); // structured bindings ftw!
-        if (begin.first == end.first || begin.second == end.second)
-        {
-            myLines.emplace_back(begin, end);
-        }
+        myLines.emplace_back(begin, end);
     }
 
     // Print out the lines (currently prints too much)
